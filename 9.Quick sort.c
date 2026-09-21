@@ -2,7 +2,7 @@
 
 int partition(int A[], int lb, int ub)
 {
-    int pivot = A[ub];
+    int pivot = A[ub];       
     int start = lb;
     int end = ub - 1;
     int temp;
@@ -27,10 +27,12 @@ int partition(int A[], int lb, int ub)
         }
     }
 
-    // Put pivot at its correct position
-    temp = A[start];
-    A[start] = A[ub];
-    A[ub] = temp;
+    if(start > end)
+    {
+        temp = A[start];
+        A[start] = A[ub];
+        A[ub] = temp;
+    }
 
     return start;
 }
@@ -44,6 +46,7 @@ void quickSort(int A[], int lb, int ub)
         loc = partition(A, lb, ub);
 
         quickSort(A, lb, loc - 1);
+
         quickSort(A, loc + 1, ub);
     }
 }
