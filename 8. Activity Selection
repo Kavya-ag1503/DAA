@@ -1,37 +1,87 @@
 #include <stdio.h>
 
+int start[100], finish[100];
+
+void merge(int left, int mid, int right) {
+    int s[100], f[100];
+    int i = left, j = mid + 1, k = 0;
+
+    while(i <= mid && j <= right) {
+        if(finish[i] <= finish[j]) {
+            s[k] = start[i];
+            f[k] = finish[i];
+            i++;
+        }
+        else {
+            s[k] = start[j];
+            f[k] = finish[j];
+            j++;
+        }
+        k++;
+    }
+
+    while(i <= mid) {
+        s[k] = start[i];
+        f[k] = finish[i];
+        i++;
+        k++;
+    }
+
+    while(j <= right) {
+        s[k] = start[j];
+        f[k] = finish[j];
+        j++;
+        k++;
+    }
+
+    for(i = 0; i < k; i++) {
+        start[left + i] = s[i];
+        finish[left + i] = f[i];
+    }
+}
+
+void mergeSort(int left, int right) {
+    if(left < right) {
+        int mid = (left + right) / 2;
+
+        mergeSort(left, mid);
+        mergeSort(mid + 1, right);
+
+        merge(left, mid, right);
+    }
+}
+
 int main() {
-    int n, i, j;
+    int n, i, j, count = 1;
 
     printf("Enter number of activities: ");
     scanf("%d", &n);
 
-    int start[n], finish[n];
+    if(n < 1 || n > 100) {
+        printf("Invalid number of activities\n");
+        return 1;
+    }
 
     printf("Enter start times:\n");
-for(i = 0; i < n; i++) {
-    scanf("%d", &start[i]);
-}
+    for(i = 0; i < n; i++) {
+        scanf("%d", &start[i]);
+    }
 
-printf("Enter finish times:\n");
-for(i = 0; i < n; i++) {
-    scanf("%d", &finish[i]);
-}
-    for(i = 0; i < n - 1; i++) {
-        for(j = i + 1; j < n; j++) {
-            if(finish[i] > finish[j]) {
-                int temp = finish[i];
-                finish[i] = finish[j];
-                finish[j] = temp;
+    printf("Enter finish times:\n");
+    for(i = 0; i < n; i++) {
+        scanf("%d", &finish[i]);
+    }
 
-                temp = start[i];
-                start[i] = start[j];
-                start[j] = temp;
-            }
+    for(i = 0; i < n; i++) {
+        if(start[i] >= finish[i]) {
+            printf("Invalid activity times\n");
+            return 1;
         }
     }
 
-    printf("Selected activities:\n");
+    mergeSort(0, n - 1);
+
+    printf("\nSelected activities:\n");
 
     i = 0;
     printf("(%d, %d)\n", start[i], finish[i]);
@@ -40,8 +90,12 @@ for(i = 0; i < n; i++) {
         if(start[j] >= finish[i]) {
             printf("(%d, %d)\n", start[j], finish[j]);
             i = j;
+            count++;
         }
     }
 
+    printf("\nTotal activities selected = %d\n", count);
+
     return 0;
 }
+
